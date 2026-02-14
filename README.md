@@ -1,8 +1,8 @@
-# Selenium Web Automation
+# Automação Web com Selenium
 
 ![CI](https://github.com/Edsong030/selenium-web-automation/actions/workflows/ci.yml/badge.svg)
 
-Projeto de automação de testes web utilizando **Java, Selenium WebDriver, JUnit 5 e Maven**, seguindo o padrão **Page Object Model (POM)** e boas práticas de automação utilizadas no mercado.
+Projeto de automação de testes web utilizando **Java, Selenium WebDriver, JUnit 5 e Maven**, seguindo o padrão **Page Object Model (POM)** e boas práticas utilizadas no mercado.
 
 ---
 
@@ -12,20 +12,27 @@ Projeto de automação de testes web utilizando **Java, Selenium WebDriver, JUni
 * Selenium WebDriver
 * JUnit 5
 * Maven
-* Page Object Model (POM)
 * GitHub Actions (CI)
+* Allure Report
 
 ---
 
 ## Arquitetura do projeto
 
-O projeto segue o padrão **Page Object Model**, que separa a lógica de interação com as páginas dos testes, facilitando manutenção e escalabilidade.
+O projeto segue o padrão **Page Object Model (POM)** para facilitar manutenção e escalabilidade dos testes.
 
 ```
 src/test/java
-├── config        # Configuração base do WebDriver
+├── config        # Configurações do WebDriver
 ├── pages         # Page Objects
+│   ├── LoginPage.java
+│   ├── InventoryPage.java
+│   ├── CartPage.java
+│   └── CheckoutPage.java
 └── tests         # Casos de teste
+    ├── LoginTest.java
+    ├── CarrinhoTest.java
+    └── CheckoutTest.java
 ```
 
 ---
@@ -34,7 +41,7 @@ src/test/java
 
 ### Login
 
-* Login com usuário válido
+* Login com sucesso
 * Login com usuário inválido
 
 ### Carrinho
@@ -42,22 +49,11 @@ src/test/java
 * Adicionar produto ao carrinho
 * Validar item no carrinho
 
----
+### Checkout
 
-## Site utilizado para testes
-
-Os testes são executados no site de demonstração:
-
-```
-https://www.saucedemo.com
-```
-
-Credenciais válidas:
-
-```
-Usuário: standard_user
-Senha: secret_sauce
-```
+* Preencher dados do cliente
+* Finalizar compra com sucesso
+* Validar mensagem de confirmação
 
 ---
 
@@ -81,24 +77,42 @@ cd selenium-web-automation
 mvn clean test
 ```
 
-O navegador será aberto automaticamente e os testes serão executados.
+---
+
+## Relatório com Allure
+
+### Gerar relatório localmente
+
+```bash
+allure serve target/allure-results
+```
+
+O relatório exibirá:
+
+* Cenários executados
+* Passos do teste
+* Status (passou/falhou)
+* Tempo de execução
 
 ---
 
 ## Integração contínua (CI)
 
-O projeto está preparado para execução automatizada utilizando **GitHub Actions**, permitindo que os testes sejam executados a cada push ou pull request.
+O projeto possui pipeline no **GitHub Actions** que:
+
+* Executa os testes automaticamente
+* Roda a cada push ou pull request
+* Mostra o status do build no badge do README
 
 ---
 
 ## Boas práticas aplicadas
 
 * Page Object Model (POM)
-* Separação por camadas
+* Separação de responsabilidades
 * Testes independentes
-* Reutilização de código
-* Estrutura escalável
-* Execução automatizada em CI
+* Configuração centralizada do WebDriver
+* Execução automatizada via CI
 
 ---
 
