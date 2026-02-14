@@ -1,5 +1,7 @@
 # Selenium Web Automation
 
+![CI](https://github.com/Edsong030/selenium-web-automation/actions/workflows/ci.yml/badge.svg)
+
 Projeto de automação de testes web utilizando **Java, Selenium WebDriver, JUnit 5 e Maven**, seguindo o padrão **Page Object Model (POM)** e boas práticas de automação utilizadas no mercado.
 
 ---
