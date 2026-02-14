@@ -28,5 +28,29 @@ public class LoginTest extends BaseTest {
 
         assertTrue(driver.getCurrentUrl().contains("saucedemo"));
     }
+    @Test
+    public void naoDeveLogarComUsuarioBloqueado() {
+
+        LoginPage loginPage = new LoginPage(driver);
+
+        loginPage.acessarSite();
+        loginPage.fazerLogin("locked_out_user", "secret_sauce");
+
+        // Validação de erro
+        assertTrue(loginPage.mensagemErroVisivel());
+    }
+    @Test
+    public void naoDeveLogarComSenhaIncorreta() {
+
+        LoginPage loginPage = new LoginPage(driver);
+
+        loginPage.acessarSite();
+        loginPage.fazerLogin("standard_user", "senha_errada");
+
+        // Validação de erro
+        assertTrue(loginPage.mensagemErroVisivel());
+    }
+
+
 
 }

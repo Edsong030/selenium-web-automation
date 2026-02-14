@@ -38,4 +38,32 @@ public class CheckoutTest extends BaseTest {
         // Validação final
         assertTrue(checkoutPage.compraFinalizadaComSucesso());
     }
+    @Test
+    public void naoDeveFinalizarCheckoutSemDados() {
+
+        LoginPage loginPage = new LoginPage(driver);
+        InventoryPage inventoryPage = new InventoryPage(driver);
+        CartPage cartPage = new CartPage(driver);
+        CheckoutPage checkoutPage = new CheckoutPage(driver);
+
+        // Login
+        loginPage.acessarSite();
+        loginPage.fazerLogin("standard_user", "secret_sauce");
+
+        // Adicionar produto
+        inventoryPage.adicionarProduto();
+        inventoryPage.abrirCarrinho();
+
+        assertTrue(cartPage.produtoEstaNoCarrinho());
+
+        // Checkout
+        checkoutPage.iniciarCheckout();
+
+        // Tentar continuar sem preencher dados
+        checkoutPage.continuarSemDados();
+
+        // Validação de erro
+        assertTrue(checkoutPage.erroVisivel());
+    }
+
 }

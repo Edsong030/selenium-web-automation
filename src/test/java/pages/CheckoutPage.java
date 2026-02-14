@@ -47,4 +47,13 @@ public class CheckoutPage {
     public boolean compraFinalizadaComSucesso() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(successMessage)).isDisplayed();
     }
+
+    public void continuarSemDados() {
+        driver.findElement(By.id("continue")).click();
+    }
+
+    public boolean erroVisivel() {
+        return driver.findElement(By.cssSelector("[data-test='error']")).isDisplayed();
+    }
+
 }
