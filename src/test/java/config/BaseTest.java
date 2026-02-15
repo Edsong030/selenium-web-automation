@@ -21,30 +21,33 @@ public class BaseTest {
     @BeforeEach
     public void setup() {
 
-        String browser = System.getProperty("browser", "chrome");
+        ChromeOptions options = new ChromeOptions();
 
-        if (browser.equalsIgnoreCase("firefox")) {
-            driver = new FirefoxDriver();
-        } else {
+        // Detecta se está rodando no CI
+        String ci = System.getenv("CI");
 
-            ChromeOptions options = new ChromeOptions();
-
-            // Desativar pop-ups e gerenciador de senhas
-            Map<String, Object> prefs = new HashMap<>();
-            prefs.put("credentials_enable_service", false);
-            prefs.put("profile.password_manager_enabled", false);
-            prefs.put("profile.password_manager_leak_detection", false);
-
-            options.setExperimentalOption("prefs", prefs);
-            options.addArguments("--disable-notifications");
-            options.addArguments("--disable-infobars");
-            options.addArguments("--disable-extensions");
-
-            driver = new ChromeDriver(options);
+        if (ci != null) {
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--window-size=1920,1080");
         }
 
+        // Desativar pop-ups e gerenciador de senhas
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        prefs.put("profile.password_manager_leak_detection", false);
+
+        options.setExperimentalOption("prefs", prefs);
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-infobars");
+        options.addArguments("--disable-extensions");
+
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
     }
+
 
     @AfterEach
     public void tearDown() {
