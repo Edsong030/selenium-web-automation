@@ -19,6 +19,7 @@ public class CarrinhoTest extends BaseTest {
         InventoryPage inventoryPage = new InventoryPage(getDriver());
         CartPage cartPage = new CartPage(getDriver());
 
+        // Acessar site antes do login
         loginPage.acessarSite();
         loginPage.fazerLogin("standard_user", "secret_sauce");
 

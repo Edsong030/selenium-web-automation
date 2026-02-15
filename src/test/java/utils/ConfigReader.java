@@ -14,17 +14,25 @@ public class ConfigReader {
                     .getResourceAsStream("config.properties");
 
             if (input == null) {
-                throw new RuntimeException("Arquivo config.properties não encontrado!");
+                throw new RuntimeException("Arquivo config.properties não encontrado no classpath.");
             }
 
             properties.load(input);
+
         } catch (Exception e) {
             throw new RuntimeException("Erro ao carregar config.properties", e);
         }
     }
 
-    public static String getUrl() {
-        String env = System.getProperty("env", "qa");
-        return properties.getProperty(env + ".url");
+    public static String get(String key) {
+
+        // 1º prioridade: parâmetro do Maven
+        String systemValue = System.getProperty(key);
+        if (systemValue != null && !systemValue.isEmpty()) {
+            return systemValue;
+        }
+
+        // 2º prioridade: config.properties
+        return properties.getProperty(key);
     }
 }

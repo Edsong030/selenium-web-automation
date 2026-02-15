@@ -29,7 +29,7 @@ public class LoginTest extends BaseTest {
         loginPage.acessarSite();
         loginPage.fazerLogin("usuario_errado", "senha_errada");
 
-        assertTrue(getDriver().getCurrentUrl().contains("saucedemo"));
+        assertTrue(loginPage.mensagemErroVisivel());
     }
 
     @Test

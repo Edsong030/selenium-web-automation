@@ -21,7 +21,7 @@ public class CheckoutTest extends BaseTest {
         CartPage cartPage = new CartPage(getDriver());
         CheckoutPage checkoutPage = new CheckoutPage(getDriver());
 
-        // Login
+        // Acessar site e logar
         loginPage.acessarSite();
         loginPage.fazerLogin("standard_user", "secret_sauce");
 
@@ -49,7 +49,7 @@ public class CheckoutTest extends BaseTest {
         CartPage cartPage = new CartPage(getDriver());
         CheckoutPage checkoutPage = new CheckoutPage(getDriver());
 
-        // Login
+        // Acessar site e logar
         loginPage.acessarSite();
         loginPage.fazerLogin("standard_user", "secret_sauce");
 
@@ -57,12 +57,11 @@ public class CheckoutTest extends BaseTest {
         inventoryPage.adicionarProduto();
         inventoryPage.abrirCarrinho();
 
+        // Validação carrinho
         assertTrue(cartPage.produtoEstaNoCarrinho());
 
         // Checkout
         checkoutPage.iniciarCheckout();
-
-        // Tentar continuar sem preencher dados
         checkoutPage.continuarSemDados();
 
         // Validação de erro

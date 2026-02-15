@@ -6,8 +6,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -24,28 +31,57 @@ public class BaseTest {
     @BeforeEach
     public void setup() {
 
-        ChromeOptions options = new ChromeOptions();
+        String browser = System.getProperty("browser", "chrome");
+        String headless = System.getProperty("headless", "true");
 
-        // Desativar gerenciador de senhas e popups
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        prefs.put("profile.password_manager_leak_detection", false);
+        WebDriver webDriver;
 
-        options.setExperimentalOption("prefs", prefs);
+        switch (browser.toLowerCase()) {
 
-        // Flags importantes
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--disable-extensions");
+            case "firefox":
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                if (headless.equals("true")) {
+                    firefoxOptions.addArguments("-headless");
+                }
+                webDriver = new FirefoxDriver(firefoxOptions);
+                break;
 
-        // ESSENCIAL para rodar no GitHub Actions
-        options.addArguments("--headless=new");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-allow-origins=*");
+            case "edge":
+                EdgeOptions edgeOptions = new EdgeOptions();
+                if (headless.equals("true")) {
+                    edgeOptions.addArguments("--headless=new");
+                }
+                webDriver = new EdgeDriver(edgeOptions);
+                break;
 
-        driver.set(new ChromeDriver(options));
+            case "chrome":
+            default:
+                ChromeOptions chromeOptions = new ChromeOptions();
+
+                Map<String, Object> prefs = new HashMap<>();
+                prefs.put("credentials_enable_service", false);
+                prefs.put("profile.password_manager_enabled", false);
+                prefs.put("profile.password_manager_leak_detection", false);
+
+                chromeOptions.setExperimentalOption("prefs", prefs);
+
+                chromeOptions.addArguments("--disable-notifications");
+                chromeOptions.addArguments("--disable-infobars");
+                chromeOptions.addArguments("--disable-extensions");
+
+                if (headless.equals("true")) {
+                    chromeOptions.addArguments("--headless=new");
+                }
+
+                chromeOptions.addArguments("--no-sandbox");
+                chromeOptions.addArguments("--disable-dev-shm-usage");
+                chromeOptions.addArguments("--remote-allow-origins=*");
+
+                webDriver = new ChromeDriver(chromeOptions);
+                break;
+        }
+
+        driver.set(webDriver);
         getDriver().manage().window().maximize();
     }
 

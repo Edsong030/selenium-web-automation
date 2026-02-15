@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.ConfigReader;
 
 import java.time.Duration;
 
@@ -23,8 +24,11 @@ public class LoginPage {
     private By inventoryTitle = By.className("title");
     private By errorMessage = By.cssSelector("[data-test='error']");
 
+    // ESTE MÉTODO PRECISA EXISTIR
     public void acessarSite() {
-        driver.get(utils.ConfigReader.getUrl());
+        String env = ConfigReader.get("environment");
+        String url = ConfigReader.get("base.url." + env);
+        driver.get(url);
     }
 
 
