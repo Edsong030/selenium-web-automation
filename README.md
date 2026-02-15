@@ -1,77 +1,65 @@
-# Automação Web com Selenium
+# 🧪 Selenium Web Automation + API Tests
 
-![CI](https://github.com/Edsong030/selenium-web-automation/actions/workflows/ci.yml/badge.svg)
+Projeto de automação de testes **Web e API** utilizando **Java, Selenium, JUnit 5, RestAssured, Allure e GitHub Actions**.
 
-Projeto de automação de testes web utilizando **Java, Selenium WebDriver, JUnit 5 e Maven**, seguindo o padrão **Page Object Model (POM)** e boas práticas utilizadas no mercado.
+O objetivo deste projeto é demonstrar boas práticas de automação, arquitetura de testes e integração contínua.
 
 ---
 
-## Tecnologias utilizadas
+## 🚀 Tecnologias utilizadas
 
 * Java 17
 * Selenium WebDriver
 * JUnit 5
+* RestAssured
 * Maven
+* Allure Reports
 * GitHub Actions (CI)
-* Allure Report
 
 ---
 
-## Arquitetura do projeto
-
-O projeto segue o padrão **Page Object Model (POM)** para facilitar manutenção e escalabilidade dos testes.
+## 📁 Estrutura do projeto
 
 ```
-src/test/java
-├── config        # Configurações do WebDriver
-├── pages         # Page Objects
-│   ├── LoginPage.java
-│   ├── InventoryPage.java
-│   ├── CartPage.java
-│   └── CheckoutPage.java
-└── tests         # Casos de teste
-    ├── LoginTest.java
-    ├── CarrinhoTest.java
-    └── CheckoutTest.java
+src
+ └── test
+     ├── java
+     │   ├── config
+     │   │   └── BaseTest.java
+     │   ├── pages
+     │   │   ├── LoginPage.java
+     │   │   ├── InventoryPage.java
+     │   │   ├── CartPage.java
+     │   │   └── CheckoutPage.java
+     │   ├── tests
+     │   │   ├── LoginTest.java
+     │   │   ├── CarrinhoTest.java
+     │   │   ├── CheckoutTest.java
+     │   │   └── api
+     │   │       └── UsuarioApiTest.java
+     │   └── utils
+     │       ├── ConfigReader.java
+     │       ├── ScreenshotUtil.java
+     │       ├── AllureUtil.java
+     │       └── TestListener.java
+     └── resources
+         ├── config.properties
+         └── junit-platform.properties
 ```
 
 ---
 
-## Cenários automatizados
+## 🔧 Como executar o projeto
 
-### Login
+### Pré-requisitos
 
-* Login com sucesso
-* Login com usuário inválido
-
-### Carrinho
-
-* Adicionar produto ao carrinho
-* Validar item no carrinho
-
-### Checkout
-
-* Preencher dados do cliente
-* Finalizar compra com sucesso
-* Validar mensagem de confirmação
+* Java 17 instalado
+* Maven instalado
+* Google Chrome instalado
 
 ---
 
-## Como executar o projeto
-
-### 1. Clonar o repositório
-
-```bash
-git clone https://github.com/Edsong030/selenium-web-automation.git
-```
-
-### 2. Acessar a pasta do projeto
-
-```bash
-cd selenium-web-automation
-```
-
-### 3. Executar os testes
+### Executar todos os testes
 
 ```bash
 mvn clean test
@@ -79,47 +67,91 @@ mvn clean test
 
 ---
 
-## Relatório com Allure
+## 📊 Gerar relatório Allure
 
-### Gerar relatório localmente
+Após executar os testes:
 
 ```bash
-allure serve target/allure-results
+allure serve allure-results
 ```
 
-O relatório exibirá:
-
-* Cenários executados
-* Passos do teste
-* Status (passou/falhou)
-* Tempo de execução
+O relatório abrirá automaticamente no navegador.
 
 ---
 
-## Integração contínua (CI)
+## 🔁 Integração contínua
 
-O projeto possui pipeline no **GitHub Actions** que:
+O projeto possui pipeline configurada no **GitHub Actions**:
 
-* Executa os testes automaticamente
-* Roda a cada push ou pull request
-* Mostra o status do build no badge do README
+* Executa os testes automaticamente a cada push
+* Garante a estabilidade da automação
+
+Arquivo de configuração:
+
+```
+.github/workflows/ci.yml
+```
 
 ---
 
-## Boas práticas aplicadas
+## 🧪 Cenários automatizados
+
+### Web (Selenium)
+
+**Login**
+
+* Login com sucesso
+* Login com senha incorreta
+* Login com usuário bloqueado
+* Login com credenciais inválidas
+
+**Carrinho**
+
+* Adicionar produto ao carrinho
+
+**Checkout**
+
+* Finalizar compra com sucesso
+* Tentar finalizar checkout sem dados
+
+---
+
+### API (RestAssured)
+
+**Usuários**
+
+* Criar usuário com sucesso
+* Validar criação com dados inválidos
+* Buscar usuário por ID
+
+---
+
+## 🧱 Boas práticas aplicadas
 
 * Page Object Model (POM)
-* Separação de responsabilidades
-* Testes independentes
-* Configuração centralizada do WebDriver
-* Execução automatizada via CI
+* Separação de camadas (pages, tests, utils, config)
+* Configuração externa via properties
+* Captura de screenshot automática
+* Relatórios com Allure
+* Pipeline CI no GitHub Actions
 
 ---
 
-## Autor
+## 👨‍💻 Autor
 
 **Edson Gomes**
-QA Automation Engineer
+QA Engineer com experiência em automação de testes Web, Mobile e API.
 
-LinkedIn:
-https://www.linkedin.com/in/edson-gomes-494398208
+🔗 GitHub:
+https://github.com/Edsong030
+
+---
+
+## 🎯 Objetivo do projeto
+
+Este projeto foi criado para:
+
+* Demonstrar conhecimentos em automação de testes
+* Aplicar boas práticas de arquitetura de testes
+* Simular um ambiente real de projeto com CI/CD
+* Servir como portfólio técnico para vagas de QA
