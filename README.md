@@ -1,20 +1,27 @@
-# 🧪 Selenium Web Automation + API Tests
+# Selenium Web Automation
 
-Projeto de automação de testes **Web e API** utilizando **Java, Selenium, JUnit 5, RestAssured, Allure e GitHub Actions**.
+Projeto de automação de testes Web utilizando **Java + Selenium + JUnit 5**, com execução:
 
-O objetivo deste projeto é demonstrar boas práticas de automação, arquitetura de testes e integração contínua.
+* Local
+* Headless
+* Paralela
+* Docker
+* Selenium Grid
+* Pipeline no GitHub Actions
+* Relatórios com Allure
 
 ---
 
-## 🚀 Tecnologias utilizadas
+## 📌 Tecnologias utilizadas
 
 * Java 17
+* Maven
 * Selenium WebDriver
 * JUnit 5
-* RestAssured
-* Maven
 * Allure Reports
-* GitHub Actions (CI)
+* Docker
+* Selenium Grid
+* GitHub Actions
 
 ---
 
@@ -34,32 +41,45 @@ src
      │   ├── tests
      │   │   ├── LoginTest.java
      │   │   ├── CarrinhoTest.java
-     │   │   ├── CheckoutTest.java
-     │   │   └── api
-     │   │       └── UsuarioApiTest.java
+     │   │   └── CheckoutTest.java
      │   └── utils
-     │       ├── ConfigReader.java
-     │       ├── ScreenshotUtil.java
-     │       ├── AllureUtil.java
-     │       └── TestListener.java
+     │       └── ConfigReader.java
      └── resources
-         ├── config.properties
-         └── junit-platform.properties
+         └── config.properties
 ```
 
 ---
 
-## 🔧 Como executar o projeto
+## ⚙️ Configuração por ambiente
 
-### Pré-requisitos
+Arquivo:
 
-* Java 17 instalado
-* Maven instalado
-* Google Chrome instalado
+```
+src/test/resources/config.properties
+```
+
+Exemplo:
+
+```properties
+# Ambiente
+environment=qa
+
+# Browser
+browser=chrome
+
+# Execução remota (Docker/Grid)
+remote=false
+
+# URLs por ambiente
+base.url.qa=https://www.saucedemo.com
+base.url.prod=https://www.saucedemo.com
+```
 
 ---
 
-### Executar todos os testes
+## ▶️ Execução dos testes
+
+### Execução local
 
 ```bash
 mvn clean test
@@ -67,26 +87,103 @@ mvn clean test
 
 ---
 
-## 📊 Gerar relatório Allure
+### Execução headless
 
-Após executar os testes:
+No `config.properties`:
 
-```bash
-allure serve allure-results
+```
+headless=true
 ```
 
-O relatório abrirá automaticamente no navegador.
+Depois execute:
+
+```bash
+mvn clean test
+```
 
 ---
 
-## 🔁 Integração contínua
+## 🐳 Execução com Docker + Selenium Grid
 
-O projeto possui pipeline configurada no **GitHub Actions**:
+### 1. Subir os containers
 
-* Executa os testes automaticamente a cada push
-* Garante a estabilidade da automação
+```bash
+docker compose up --build
+```
 
-Arquivo de configuração:
+Isso irá:
+
+* Subir o Selenium Grid
+* Executar os testes automaticamente
+
+---
+
+### 2. Verificar execução
+
+Logs no terminal ou no Docker Desktop:
+
+```
+BUILD SUCCESS
+Tests run: 8, Failures: 0, Errors: 0
+```
+
+---
+
+## 📊 Relatórios Allure
+
+### Gerar relatório
+
+```bash
+mvn allure:serve
+```
+
+Ou:
+
+```bash
+allure serve target/allure-results
+```
+
+---
+
+## 🔁 Execução por tags
+
+Os testes estão organizados por tags:
+
+```
+@Tag("web")
+```
+
+Executar apenas testes web:
+
+```bash
+mvn test -Dgroups=web
+```
+
+---
+
+## ⚡ Execução paralela
+
+Configurada via:
+
+```
+junit-platform.properties
+```
+
+Execução automática em paralelo durante os testes.
+
+---
+
+## 🚀 Pipeline CI/CD
+
+O projeto possui pipeline configurada no **GitHub Actions**.
+
+A pipeline executa automaticamente:
+
+* Build do projeto
+* Execução dos testes
+* Relatórios
+
+Arquivo:
 
 ```
 .github/workflows/ci.yml
@@ -94,64 +191,23 @@ Arquivo de configuração:
 
 ---
 
-## 🧪 Cenários automatizados
-
-### Web (Selenium)
-
-**Login**
-
-* Login com sucesso
-* Login com senha incorreta
-* Login com usuário bloqueado
-* Login com credenciais inválidas
-
-**Carrinho**
-
-* Adicionar produto ao carrinho
-
-**Checkout**
-
-* Finalizar compra com sucesso
-* Tentar finalizar checkout sem dados
-
----
-
-### API (RestAssured)
-
-**Usuários**
-
-* Criar usuário com sucesso
-* Validar criação com dados inválidos
-* Buscar usuário por ID
-
----
-
-## 🧱 Boas práticas aplicadas
-
-* Page Object Model (POM)
-* Separação de camadas (pages, tests, utils, config)
-* Configuração externa via properties
-* Captura de screenshot automática
-* Relatórios com Allure
-* Pipeline CI no GitHub Actions
-
----
-
 ## 👨‍💻 Autor
 
 **Edson Gomes**
-QA Engineer com experiência em automação de testes Web, Mobile e API.
+QA Automation Engineer
 
-🔗 GitHub:
-https://github.com/Edsong030
+* Experiência com BDD, automação web, mobile e API
+* Foco em qualidade, CI/CD e testes automatizados
+* Pretensão salarial: R$ 8k – R$ 10k
 
 ---
 
-## 🎯 Objetivo do projeto
+## 📈 Próximas evoluções
 
-Este projeto foi criado para:
+* Testes de API com RestAssured
+* Execução multi-browser
+* Paralelismo no Selenium Grid
+* Pipeline com relatório Allure publicado
+* Testes de segurança
 
-* Demonstrar conhecimentos em automação de testes
-* Aplicar boas práticas de arquitetura de testes
-* Simular um ambiente real de projeto com CI/CD
-* Servir como portfólio técnico para vagas de QA
+---
