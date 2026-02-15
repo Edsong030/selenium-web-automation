@@ -7,19 +7,37 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+
+  api-tests:
     runs-on: ubuntu-latest
+    name: API Tests
 
     steps:
-      - name: Checkout código
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
-      - name: Rodar testes
-        run: mvn clean test -Dheadless=true
+      - name: Run API tests
+        run: mvn clean test -Dgroups=api
 
+  web-tests:
+    runs-on: ubuntu-latest
+    name: Web Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Run Web tests
+        run: mvn clean test -Dgroups=web
