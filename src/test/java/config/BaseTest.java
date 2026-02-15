@@ -26,30 +26,24 @@ public class BaseTest {
     public void setup() {
         try {
 
-            String browser = ConfigReader.get("browser");
+            String browser = System.getProperty("browser",
+                    ConfigReader.get("browser"));
+
             String remote = ConfigReader.get("remote");
-            String headless = ConfigReader.get("headless");
+            boolean isRemote = "true".equalsIgnoreCase(remote);
 
             ChromeOptions options = new ChromeOptions();
-
-            if ("true".equalsIgnoreCase(headless)) {
-                options.addArguments("--headless=new");
-            }
-
+            options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
 
-            // Execução remota (Docker/Grid)
-            if ("true".equalsIgnoreCase(remote)) {
-
+            if (isRemote) {
                 driver.set(new RemoteWebDriver(
                         new URL("http://selenium-hub:4444/wd/hub"),
                         options
                 ));
-
             } else {
-                // Execução local
-                driver.set(new ChromeDriver(options));
+                driver.set(new org.openqa.selenium.chrome.ChromeDriver(options));
             }
 
             getDriver().manage().window().maximize();
@@ -58,6 +52,7 @@ public class BaseTest {
             throw new RuntimeException("Erro ao iniciar driver", e);
         }
     }
+
 
     @AfterEach
     public void tearDown() {
