@@ -16,8 +16,9 @@ public class LoginTest extends BaseTest {
         loginPage.acessarSite();
         loginPage.fazerLogin("standard_user", "secret_sauce");
 
-        assertTrue(driver.getCurrentUrl().contains("inventory"));
+        assertTrue(loginPage.loginRealizadoComSucesso());
     }
+
     @Test
     public void naoDeveLogarComCredenciaisInvalidas() {
 

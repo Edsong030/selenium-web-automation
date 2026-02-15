@@ -1,11 +1,16 @@
 package config;
 
+import io.qameta.allure.Allure;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,35 +21,43 @@ public class BaseTest {
     @BeforeEach
     public void setup() {
 
-        ChromeOptions options = new ChromeOptions();
+        String browser = System.getProperty("browser", "chrome");
 
-        // Desativar pop-ups e gerenciador de senhas
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        prefs.put("profile.password_manager_leak_detection", false);
+        if (browser.equalsIgnoreCase("firefox")) {
+            driver = new FirefoxDriver();
+        } else {
 
-        options.setExperimentalOption("prefs", prefs);
+            ChromeOptions options = new ChromeOptions();
 
-        // Flags de estabilidade
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--disable-extensions");
+            // Desativar pop-ups e gerenciador de senhas
+            Map<String, Object> prefs = new HashMap<>();
+            prefs.put("credentials_enable_service", false);
+            prefs.put("profile.password_manager_enabled", false);
+            prefs.put("profile.password_manager_leak_detection", false);
 
-        // Ativa headless se estiver rodando no CI
-        String headless = System.getProperty("headless");
-        if ("true".equals(headless)) {
-            options.addArguments("--headless=new");
-            options.addArguments("--window-size=1920,1080");
+            options.setExperimentalOption("prefs", prefs);
+            options.addArguments("--disable-notifications");
+            options.addArguments("--disable-infobars");
+            options.addArguments("--disable-extensions");
+
+            driver = new ChromeDriver(options);
         }
 
-        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
     }
 
     @AfterEach
     public void tearDown() {
         if (driver != null) {
+
+            byte[] screenshot = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.BYTES);
+
+            Allure.addAttachment(
+                    "Screenshot",
+                    new ByteArrayInputStream(screenshot)
+            );
+
             driver.quit();
         }
     }
