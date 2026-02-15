@@ -15,9 +15,9 @@ public class CarrinhoTest extends BaseTest {
     @Test
     public void deveAdicionarProdutoAoCarrinho() {
 
-        LoginPage loginPage = new LoginPage(driver);
-        InventoryPage inventoryPage = new InventoryPage(driver);
-        CartPage cartPage = new CartPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
+        InventoryPage inventoryPage = new InventoryPage(getDriver());
+        CartPage cartPage = new CartPage(getDriver());
 
         loginPage.acessarSite();
         loginPage.fazerLogin("standard_user", "secret_sauce");

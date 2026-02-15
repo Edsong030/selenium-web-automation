@@ -8,7 +8,6 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -16,24 +15,17 @@ import java.util.Map;
 
 public class BaseTest {
 
-    protected WebDriver driver;
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
 
     @BeforeEach
     public void setup() {
 
         ChromeOptions options = new ChromeOptions();
 
-        // Detecta se está rodando no CI
-        String ci = System.getenv("CI");
-
-        if (ci != null) {
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--window-size=1920,1080");
-        }
-
-        // Desativar pop-ups e gerenciador de senhas
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);
@@ -44,16 +36,15 @@ public class BaseTest {
         options.addArguments("--disable-infobars");
         options.addArguments("--disable-extensions");
 
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
+        driver.set(new ChromeDriver(options));
+        getDriver().manage().window().maximize();
     }
-
 
     @AfterEach
     public void tearDown() {
-        if (driver != null) {
+        if (getDriver() != null) {
 
-            byte[] screenshot = ((TakesScreenshot) driver)
+            byte[] screenshot = ((TakesScreenshot) getDriver())
                     .getScreenshotAs(OutputType.BYTES);
 
             Allure.addAttachment(
@@ -61,7 +52,8 @@ public class BaseTest {
                     new ByteArrayInputStream(screenshot)
             );
 
-            driver.quit();
+            getDriver().quit();
+            driver.remove();
         }
     }
 }

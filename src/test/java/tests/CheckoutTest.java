@@ -8,7 +8,6 @@ import pages.InventoryPage;
 import pages.LoginPage;
 import org.junit.jupiter.api.Tag;
 
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("web")
@@ -17,10 +16,10 @@ public class CheckoutTest extends BaseTest {
     @Test
     public void deveFinalizarCompraComSucesso() {
 
-        LoginPage loginPage = new LoginPage(driver);
-        InventoryPage inventoryPage = new InventoryPage(driver);
-        CartPage cartPage = new CartPage(driver);
-        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
+        InventoryPage inventoryPage = new InventoryPage(getDriver());
+        CartPage cartPage = new CartPage(getDriver());
+        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
 
         // Login
         loginPage.acessarSite();
@@ -41,13 +40,14 @@ public class CheckoutTest extends BaseTest {
         // Validação final
         assertTrue(checkoutPage.compraFinalizadaComSucesso());
     }
+
     @Test
     public void naoDeveFinalizarCheckoutSemDados() {
 
-        LoginPage loginPage = new LoginPage(driver);
-        InventoryPage inventoryPage = new InventoryPage(driver);
-        CartPage cartPage = new CartPage(driver);
-        CheckoutPage checkoutPage = new CheckoutPage(driver);
+        LoginPage loginPage = new LoginPage(getDriver());
+        InventoryPage inventoryPage = new InventoryPage(getDriver());
+        CartPage cartPage = new CartPage(getDriver());
+        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
 
         // Login
         loginPage.acessarSite();
@@ -68,5 +68,4 @@ public class CheckoutTest extends BaseTest {
         // Validação de erro
         assertTrue(checkoutPage.erroVisivel());
     }
-
 }
