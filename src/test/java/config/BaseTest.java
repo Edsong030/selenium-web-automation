@@ -17,7 +17,7 @@ public class BaseTest {
 
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    public static WebDriver getDriver() {
+    public WebDriver getDriver() {
         return driver.get();
     }
 
@@ -26,20 +26,24 @@ public class BaseTest {
 
         ChromeOptions options = new ChromeOptions();
 
-        // Detecta se está rodando na CI
-        String ci = System.getenv("CI");
-
-        if (ci != null) {
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-        }
-
+        // Desativar gerenciador de senhas e popups
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);
+        prefs.put("profile.password_manager_leak_detection", false);
 
         options.setExperimentalOption("prefs", prefs);
+
+        // Flags importantes
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-infobars");
+        options.addArguments("--disable-extensions");
+
+        // ESSENCIAL para rodar no GitHub Actions
+        options.addArguments("--headless=new");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
 
         driver.set(new ChromeDriver(options));
         getDriver().manage().window().maximize();
