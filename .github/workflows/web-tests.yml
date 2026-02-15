@@ -1,8 +1,8 @@
-name: Testes Web
+name: Web Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
 
 jobs:
@@ -10,12 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix:
         browser: [chrome, firefox]
 
     steps:
-      - name: Checkout código
+      - name: Checkout do código
         uses: actions/checkout@v4
 
       - name: Configurar Java
@@ -24,43 +23,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Instalar dependências
-        run: mvn clean install -DskipTests
-
-      - name: Executar testes web
+      - name: Rodar testes web
         run: mvn test -Dgroups=web -Dbrowser=${{ matrix.browser }}
 
       - name: Gerar relatório Allure
         if: always()
         run: mvn allure:report
-  FROM maven:3.9.9-eclipse-temurin-17
-  
-  # Instalar Chrome e Firefox
-  RUN apt-get update && apt-get install -y \
-  wget \
-  unzip \
-  gnupg \
-  curl \
-  firefox-esr \
-  && rm -rf /var/lib/apt/lists/*
-  
-  # Instalar Google Chrome
-  RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google.gpg \
-  && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
-  > /etc/apt/sources.list.d/google.list \
-  && apt-get update \
-  && apt-get install -y google-chrome-stable \
-  && rm -rf /var/lib/apt/lists/*
-  
-  WORKDIR /app
-  
-  COPY . .
-  
-  RUN mvn clean install -DskipTests
-  
-  CMD ["mvn", "test"]
 
-      - name: Upload relatório Allure
+      - name: Upload do relatório Allure
         if: always()
         uses: actions/upload-artifact@v4
         with:
