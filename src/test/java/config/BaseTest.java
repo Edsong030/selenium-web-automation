@@ -6,19 +6,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import utils.ConfigReader;
 
 import java.io.ByteArrayInputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URL;
 
 public class BaseTest {
 
@@ -30,59 +24,39 @@ public class BaseTest {
 
     @BeforeEach
     public void setup() {
+        try {
 
-        String browser = System.getProperty("browser", "chrome");
-        String headless = System.getProperty("headless", "true");
+            String browser = ConfigReader.get("browser");
+            String remote = ConfigReader.get("remote");
+            String headless = ConfigReader.get("headless");
 
-        WebDriver webDriver;
+            ChromeOptions options = new ChromeOptions();
 
-        switch (browser.toLowerCase()) {
+            if ("true".equalsIgnoreCase(headless)) {
+                options.addArguments("--headless=new");
+            }
 
-            case "firefox":
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (headless.equals("true")) {
-                    firefoxOptions.addArguments("-headless");
-                }
-                webDriver = new FirefoxDriver(firefoxOptions);
-                break;
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
 
-            case "edge":
-                EdgeOptions edgeOptions = new EdgeOptions();
-                if (headless.equals("true")) {
-                    edgeOptions.addArguments("--headless=new");
-                }
-                webDriver = new EdgeDriver(edgeOptions);
-                break;
+            // Execução remota (Docker/Grid)
+            if ("true".equalsIgnoreCase(remote)) {
 
-            case "chrome":
-            default:
-                ChromeOptions chromeOptions = new ChromeOptions();
+                driver.set(new RemoteWebDriver(
+                        new URL("http://selenium-hub:4444/wd/hub"),
+                        options
+                ));
 
-                Map<String, Object> prefs = new HashMap<>();
-                prefs.put("credentials_enable_service", false);
-                prefs.put("profile.password_manager_enabled", false);
-                prefs.put("profile.password_manager_leak_detection", false);
+            } else {
+                // Execução local
+                driver.set(new ChromeDriver(options));
+            }
 
-                chromeOptions.setExperimentalOption("prefs", prefs);
+            getDriver().manage().window().maximize();
 
-                chromeOptions.addArguments("--disable-notifications");
-                chromeOptions.addArguments("--disable-infobars");
-                chromeOptions.addArguments("--disable-extensions");
-
-                if (headless.equals("true")) {
-                    chromeOptions.addArguments("--headless=new");
-                }
-
-                chromeOptions.addArguments("--no-sandbox");
-                chromeOptions.addArguments("--disable-dev-shm-usage");
-                chromeOptions.addArguments("--remote-allow-origins=*");
-
-                webDriver = new ChromeDriver(chromeOptions);
-                break;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao iniciar driver", e);
         }
-
-        driver.set(webDriver);
-        getDriver().manage().window().maximize();
     }
 
     @AfterEach
