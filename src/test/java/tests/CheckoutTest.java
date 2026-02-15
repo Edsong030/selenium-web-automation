@@ -6,9 +6,12 @@ import pages.CartPage;
 import pages.CheckoutPage;
 import pages.InventoryPage;
 import pages.LoginPage;
+import org.junit.jupiter.api.Tag;
+
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("web")
 public class CheckoutTest extends BaseTest {
 
     @Test

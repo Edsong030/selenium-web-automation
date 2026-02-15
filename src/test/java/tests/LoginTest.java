@@ -1,11 +1,13 @@
 package tests;
 
+import org.junit.jupiter.api.Tag;
 import config.BaseTest;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("web")
 public class LoginTest extends BaseTest {
 
     @Test
