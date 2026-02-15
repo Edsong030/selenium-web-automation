@@ -1,71 +1,50 @@
-package tests;
+package pages;
 
-import config.BaseTest;
-import org.junit.jupiter.api.Test;
-import pages.CartPage;
-import pages.CheckoutPage;
-import pages.InventoryPage;
-import pages.LoginPage;
-import org.junit.jupiter.api.Tag;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.Duration;
 
-@Tag("web")
-public class CheckoutTest extends BaseTest {
+public class CheckoutPage {
 
-    @Test
-    public void deveFinalizarCompraComSucesso() {
+    private WebDriver driver;
+    private WebDriverWait wait;
 
-        LoginPage loginPage = new LoginPage(getDriver());
-        InventoryPage inventoryPage = new InventoryPage(getDriver());
-        CartPage cartPage = new CartPage(getDriver());
-        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
-
-        // Login
-        loginPage.acessarSite();
-        loginPage.fazerLogin("standard_user", "secret_sauce");
-
-        // Adicionar produto
-        inventoryPage.adicionarProduto();
-        inventoryPage.abrirCarrinho();
-
-        // Validação carrinho
-        assertTrue(cartPage.produtoEstaNoCarrinho());
-
-        // Checkout
-        checkoutPage.iniciarCheckout();
-        checkoutPage.preencherDados("Edson", "Gomes", "87000-000");
-        checkoutPage.finalizarCompra();
-
-        // Validação final
-        assertTrue(checkoutPage.compraFinalizadaComSucesso());
+    public CheckoutPage(WebDriver driver) {
+        this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    @Test
-    public void naoDeveFinalizarCheckoutSemDados() {
+    public void iniciarCheckout() {
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("checkout"))).click();
+    }
 
-        LoginPage loginPage = new LoginPage(getDriver());
-        InventoryPage inventoryPage = new InventoryPage(getDriver());
-        CartPage cartPage = new CartPage(getDriver());
-        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
+    public void preencherDados(String nome, String sobrenome, String cep) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys(nome);
+        driver.findElement(By.id("last-name")).sendKeys(sobrenome);
+        driver.findElement(By.id("postal-code")).sendKeys(cep);
+        driver.findElement(By.id("continue")).click();
+    }
 
-        // Login
-        loginPage.acessarSite();
-        loginPage.fazerLogin("standard_user", "secret_sauce");
+    public void continuarSemDados() {
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("continue"))).click();
+    }
 
-        // Adicionar produto
-        inventoryPage.adicionarProduto();
-        inventoryPage.abrirCarrinho();
+    public void finalizarCompra() {
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("finish"))).click();
+    }
 
-        assertTrue(cartPage.produtoEstaNoCarrinho());
+    public boolean compraFinalizadaComSucesso() {
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.className("complete-header"))
+        ).isDisplayed();
+    }
 
-        // Checkout
-        checkoutPage.iniciarCheckout();
-
-        // Tentar continuar sem preencher dados
-        checkoutPage.continuarSemDados();
-
-        // Validação de erro
-        assertTrue(checkoutPage.erroVisivel());
+    public boolean erroVisivel() {
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[data-test='error']"))
+        ).isDisplayed();
     }
 }
