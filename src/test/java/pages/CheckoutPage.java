@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class CheckoutPage {
 
@@ -30,19 +32,35 @@ public class CheckoutPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(lastName)).sendKeys(sobrenome);
         wait.until(ExpectedConditions.visibilityOfElementLocated(postalCode)).sendKeys(cep);
 
-        wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+        WebElement botaoContinue = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(continueButton)
+        );
 
-        // espera a próxima página
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", botaoContinue);
+
         wait.until(ExpectedConditions.urlContains("checkout-step-two"));
     }
 
     public void continuarSemDados() {
-        wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+        WebElement botaoContinue = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(continueButton)
+        );
+
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", botaoContinue);
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
     }
 
     public void finalizarCompra() {
-        wait.until(ExpectedConditions.elementToBeClickable(finishButton)).click();
+        WebElement botaoFinish = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(finishButton)
+        );
+
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", botaoFinish);
+
         wait.until(ExpectedConditions.urlContains("checkout-complete"));
     }
 
