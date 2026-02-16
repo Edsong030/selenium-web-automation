@@ -15,6 +15,7 @@ public class InventoryPage {
 
     private By addBackpack = By.id("add-to-cart-sauce-labs-backpack");
     private By cartIcon = By.cssSelector(".shopping_cart_link");
+    private By cartBadge = By.className("shopping_cart_badge");
 
     public InventoryPage(WebDriver driver) {
         this.driver = driver;
@@ -23,23 +24,20 @@ public class InventoryPage {
 
     public void adicionarProduto() {
         wait.until(ExpectedConditions.elementToBeClickable(addBackpack)).click();
+
+        // Aguarda o número aparecer no carrinho (garante que adicionou)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(cartBadge));
     }
 
     public void abrirCarrinho() {
         WebElement carrinho = wait.until(
-                ExpectedConditions.elementToBeClickable(cartIcon)
+                ExpectedConditions.visibilityOfElementLocated(cartIcon)
         );
 
-        try {
-            carrinho.click();
-        } catch (Exception e) {
-            ((JavascriptExecutor) driver)
-                    .executeScript("arguments[0].click();", carrinho);
-        }
+        // Clique via JavaScript (mais estável no CI)
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", carrinho);
 
         wait.until(ExpectedConditions.urlContains("cart.html"));
     }
-
-
-
 }
