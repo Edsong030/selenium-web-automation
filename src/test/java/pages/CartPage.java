@@ -26,11 +26,30 @@ public class CartPage {
     }
 
     public void clicarCheckout() {
-        wait.until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
 
-        // Garante que foi para a etapa de checkout
+        WebElement botaoCheckout = wait.until(
+                ExpectedConditions.elementToBeClickable(checkoutButton)
+        );
+
+        // Garante visibilidade
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView(true);", botaoCheckout);
+
+        // Pequena pausa para estabilizar no CI
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Clique via JavaScript (100% confiável em headless)
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", botaoCheckout);
+
+        // Aguarda navegação
         wait.until(ExpectedConditions.urlContains("checkout-step-one"));
     }
+
 
 
 
