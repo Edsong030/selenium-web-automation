@@ -6,13 +6,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class CartPage {
 
     private WebDriver driver;
     private WebDriverWait wait;
 
-    private By cartItem = By.className("inventory_item_name");
+    private By cartItem = By.className("cart_item");
     private By checkoutButton = By.id("checkout");
 
     public CartPage(WebDriver driver) {
@@ -31,27 +32,18 @@ public class CartPage {
                 ExpectedConditions.elementToBeClickable(checkoutButton)
         );
 
-        // Garante visibilidade
         ((JavascriptExecutor) driver)
                 .executeScript("arguments[0].scrollIntoView(true);", botaoCheckout);
 
-        // Pequena pausa para estabilizar no CI
         try {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
-        // Clique via JavaScript (100% confiável em headless)
         ((JavascriptExecutor) driver)
                 .executeScript("arguments[0].click();", botaoCheckout);
 
-        // Aguarda navegação
         wait.until(ExpectedConditions.urlContains("checkout-step-one"));
     }
-
-
-
-
-
 }
