@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class InventoryPage {
 
@@ -24,9 +26,18 @@ public class InventoryPage {
     }
 
     public void abrirCarrinho() {
-        wait.until(ExpectedConditions.elementToBeClickable(cartIcon)).click();
+        WebElement carrinho = wait.until(
+                ExpectedConditions.elementToBeClickable(cartIcon)
+        );
 
-        // GARANTE que foi para o carrinho
+        // Garante que o elemento esteja visível na tela
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView(true);", carrinho);
+
+        carrinho.click();
+
+        // Aguarda navegação
         wait.until(ExpectedConditions.urlContains("cart.html"));
     }
+
 }
