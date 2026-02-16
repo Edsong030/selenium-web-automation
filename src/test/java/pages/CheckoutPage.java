@@ -28,15 +28,25 @@ public class CheckoutPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(firstName)).sendKeys(nome);
         driver.findElement(lastName).sendKeys(sobrenome);
         driver.findElement(postalCode).sendKeys(cep);
+
         driver.findElement(continueButton).click();
+
+        // AGUARDA IR PARA O STEP TWO
+        wait.until(ExpectedConditions.urlContains("checkout-step-two"));
     }
 
     public void continuarSemDados() {
         wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+
+        // Aguarda o erro aparecer
+        wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
     }
 
     public void finalizarCompra() {
         wait.until(ExpectedConditions.elementToBeClickable(finishButton)).click();
+
+        // Aguarda tela final
+        wait.until(ExpectedConditions.urlContains("checkout-complete"));
     }
 
     public boolean compraFinalizadaComSucesso() {
