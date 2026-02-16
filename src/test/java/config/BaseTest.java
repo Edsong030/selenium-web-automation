@@ -36,29 +36,38 @@ public class BaseTest {
                 options.addArguments("--no-sandbox");
                 options.addArguments("--disable-dev-shm-usage");
                 options.addArguments("--window-size=1920,1080");
-            } else {
-                options.addArguments("--start-maximized");
+                options.addArguments("--disable-gpu");
             }
+
+            WebDriver webDriver;
 
             // Execução remota (Docker / Grid / CI)
             if ("true".equalsIgnoreCase(remote)) {
 
                 String gridUrl = ConfigReader.get("grid.url");
 
-                driver.set(new RemoteWebDriver(
+                webDriver = new RemoteWebDriver(
                         new URL(gridUrl),
                         options
-                ));
+                );
 
             } else {
                 // Execução local
-                driver.set(new ChromeDriver(options));
+                webDriver = new ChromeDriver(options);
             }
+
+            // Timeouts globais
+            webDriver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
+            webDriver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(5));
+            webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(30));
+
+            driver.set(webDriver);
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao iniciar driver", e);
         }
     }
+
 
     @AfterEach
     public void tearDown() {
