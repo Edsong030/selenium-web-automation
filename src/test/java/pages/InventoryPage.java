@@ -30,14 +30,16 @@ public class InventoryPage {
                 ExpectedConditions.elementToBeClickable(cartIcon)
         );
 
-        // Garante que o elemento esteja visível na tela
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].scrollIntoView(true);", carrinho);
+        try {
+            carrinho.click();
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver)
+                    .executeScript("arguments[0].click();", carrinho);
+        }
 
-        carrinho.click();
-
-        // Aguarda navegação
         wait.until(ExpectedConditions.urlContains("cart.html"));
     }
+
+
 
 }

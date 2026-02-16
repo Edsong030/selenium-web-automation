@@ -9,6 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import utils.ConfigReader;
 
 import java.io.ByteArrayInputStream;
@@ -28,46 +30,70 @@ public class BaseTest {
 
             String remote = ConfigReader.get("remote");
             String headless = ConfigReader.get("headless");
+            String browser = System.getProperty("browser", ConfigReader.get("browser"));
 
-            ChromeOptions options = new ChromeOptions();
-
-            if ("true".equalsIgnoreCase(headless)) {
-                options.addArguments("--headless=new");
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--disable-gpu");
-            }
-
-            WebDriver webDriver;
-
-            // Execução remota (Docker / Grid / CI)
             if ("true".equalsIgnoreCase(remote)) {
 
                 String gridUrl = ConfigReader.get("grid.url");
 
-                webDriver = new RemoteWebDriver(
-                        new URL(gridUrl),
-                        options
-                );
+                if ("firefox".equalsIgnoreCase(browser)) {
+                    FirefoxOptions options = new FirefoxOptions();
+                    if ("true".equalsIgnoreCase(headless)) {
+                        options.addArguments("-headless");
+                    }
+
+                    driver.set(new RemoteWebDriver(
+                            new URL(gridUrl),
+                            options
+                    ));
+
+                } else {
+                    ChromeOptions options = new ChromeOptions();
+                    if ("true".equalsIgnoreCase(headless)) {
+                        options.addArguments("--headless=new");
+                        options.addArguments("--no-sandbox");
+                        options.addArguments("--disable-dev-shm-usage");
+                        options.addArguments("--window-size=1920,1080");
+                    }
+
+                    driver.set(new RemoteWebDriver(
+                            new URL(gridUrl),
+                            options
+                    ));
+                }
 
             } else {
                 // Execução local
-                webDriver = new ChromeDriver(options);
+
+                if ("firefox".equalsIgnoreCase(browser)) {
+                    FirefoxOptions options = new FirefoxOptions();
+
+                    if ("true".equalsIgnoreCase(headless)) {
+                        options.addArguments("-headless");
+                    }
+
+                    driver.set(new FirefoxDriver(options));
+
+                } else {
+                    ChromeOptions options = new ChromeOptions();
+
+                    if ("true".equalsIgnoreCase(headless)) {
+                        options.addArguments("--headless=new");
+                        options.addArguments("--no-sandbox");
+                        options.addArguments("--disable-dev-shm-usage");
+                        options.addArguments("--window-size=1920,1080");
+                    } else {
+                        options.addArguments("--start-maximized");
+                    }
+
+                    driver.set(new ChromeDriver(options));
+                }
             }
-
-            // Timeouts globais
-            webDriver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
-            webDriver.manage().timeouts().implicitlyWait(java.time.Duration.ofSeconds(5));
-            webDriver.manage().timeouts().pageLoadTimeout(java.time.Duration.ofSeconds(30));
-
-            driver.set(webDriver);
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao iniciar driver", e);
         }
     }
-
 
     @AfterEach
     public void tearDown() {
