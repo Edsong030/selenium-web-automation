@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 
 public class CheckoutPage {
@@ -11,8 +12,6 @@ public class CheckoutPage {
     private WebDriver driver;
     private WebDriverWait wait;
 
-    // Locators
-    private By checkoutButton = By.id("checkout");
     private By firstName = By.id("first-name");
     private By lastName = By.id("last-name");
     private By postalCode = By.id("postal-code");
@@ -26,32 +25,46 @@ public class CheckoutPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
-    public void iniciarCheckout() {
-        wait.until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
-    }
-
     public void preencherDados(String nome, String sobrenome, String cep) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(firstName)).sendKeys(nome);
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(firstName));
+
+        driver.findElement(firstName).clear();
+        driver.findElement(firstName).sendKeys(nome);
+
+        driver.findElement(lastName).clear();
         driver.findElement(lastName).sendKeys(sobrenome);
+
+        driver.findElement(postalCode).clear();
         driver.findElement(postalCode).sendKeys(cep);
+
+        wait.until(ExpectedConditions.elementToBeClickable(continueButton));
         driver.findElement(continueButton).click();
+
+        // Aguarda realmente mudar de página
+        wait.until(ExpectedConditions.visibilityOfElementLocated(finishButton));
     }
 
-    public void continuarSemDados() {
-        wait.until(ExpectedConditions.elementToBeClickable(continueButton)).click();
-    }
 
     public void finalizarCompra() {
-        wait.until(ExpectedConditions.elementToBeClickable(finishButton)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(finishButton));
+        driver.findElement(finishButton).click();
     }
 
     public boolean compraFinalizadaComSucesso() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(successMessage))
-                .isDisplayed();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(successMessage));
+        return driver.findElement(successMessage).isDisplayed();
+    }
+
+    public void continuarSemDados() {
+        wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+        driver.findElement(continueButton).click();
     }
 
     public boolean erroVisivel() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage))
-                .isDisplayed();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(errorMessage));
+        return true;
     }
+
+
 }

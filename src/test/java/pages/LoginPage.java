@@ -24,16 +24,14 @@ public class LoginPage {
     private By inventoryTitle = By.className("title");
     private By errorMessage = By.cssSelector("[data-test='error']");
 
-    // ESTE MÉTODO PRECISA EXISTIR
     public void acessarSite() {
         String env = ConfigReader.get("environment");
         String url = ConfigReader.get("base.url." + env);
         driver.get(url);
     }
 
-
     public void fazerLogin(String user, String pass) {
-        driver.findElement(username).sendKeys(user);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(username)).sendKeys(user);
         driver.findElement(password).sendKeys(pass);
         driver.findElement(loginButton).click();
     }

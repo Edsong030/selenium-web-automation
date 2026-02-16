@@ -26,33 +26,39 @@ public class BaseTest {
     public void setup() {
         try {
 
-            String browser = System.getProperty("browser",
-                    ConfigReader.get("browser"));
-
             String remote = ConfigReader.get("remote");
-            boolean isRemote = "true".equalsIgnoreCase(remote);
+            String headless = ConfigReader.get("headless");
 
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
 
-            if (isRemote) {
-                driver.set(new RemoteWebDriver(
-                        new URL("http://selenium-hub:4444/wd/hub"),
-                        options
-                ));
+            if ("true".equalsIgnoreCase(headless)) {
+                options.addArguments("--headless=new");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--window-size=1920,1080");
             } else {
-                driver.set(new org.openqa.selenium.chrome.ChromeDriver(options));
+                options.addArguments("--start-maximized");
             }
 
-            getDriver().manage().window().maximize();
+            // Execução remota (Docker / Grid / CI)
+            if ("true".equalsIgnoreCase(remote)) {
+
+                String gridUrl = ConfigReader.get("grid.url");
+
+                driver.set(new RemoteWebDriver(
+                        new URL(gridUrl),
+                        options
+                ));
+
+            } else {
+                // Execução local
+                driver.set(new ChromeDriver(options));
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao iniciar driver", e);
         }
     }
-
 
     @AfterEach
     public void tearDown() {

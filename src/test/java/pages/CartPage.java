@@ -2,18 +2,37 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class CartPage {
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
-    private By produto = By.className("inventory_item_name");
+    private By cartItem = By.className("inventory_item_name");
+    private By checkoutButton = By.id("checkout");
 
     public CartPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public boolean produtoEstaNoCarrinho() {
-        return driver.findElements(produto).size() > 0;
+        wait.until(ExpectedConditions.visibilityOfElementLocated(cartItem));
+        return driver.findElement(cartItem).isDisplayed();
     }
+
+    public void clicarCheckout() {
+        wait.until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
+
+        // Garante que foi para a etapa de checkout
+        wait.until(ExpectedConditions.urlContains("checkout-step-one"));
+    }
+
+
+
+
 }
