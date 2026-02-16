@@ -23,11 +23,18 @@ public class InventoryPage {
     }
 
     public void adicionarProduto() {
-        wait.until(ExpectedConditions.elementToBeClickable(addBackpack)).click();
+        WebElement botao = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(addBackpack)
+        );
 
-        // Aguarda o número aparecer no carrinho (garante que adicionou)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(cartBadge));
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();", botao);
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.className("shopping_cart_badge")
+        ));
     }
+
 
     public void abrirCarrinho() {
         WebElement carrinho = wait.until(
