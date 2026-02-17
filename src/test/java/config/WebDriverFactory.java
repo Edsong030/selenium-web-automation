@@ -1,54 +1,30 @@
-package config;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import utils.ConfigReader;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class WebDriverFactory {
 
-    public static WebDriver createDriver() {
+    private static final String REMOTE_URL = "http://your-remote-url:4444/wd/hub";
 
-        String browser = ConfigReader.get("browser");
-        boolean headless = Boolean.parseBoolean(ConfigReader.get("headless"));
+    public static WebDriver createDriver(String executionMode) {
+        WebDriver driver;
 
-        switch (browser.toLowerCase()) {
-
-            case "firefox":
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (headless) {
-                    firefoxOptions.addArguments("--headless");
-                }
-                return new FirefoxDriver(firefoxOptions);
-
-            case "chrome":
-            default:
-                ChromeOptions chromeOptions = new ChromeOptions();
-
-                Map<String, Object> prefs = new HashMap<>();
-                prefs.put("credentials_enable_service", false);
-                prefs.put("profile.password_manager_enabled", false);
-                prefs.put("profile.password_manager_leak_detection", false);
-
-                chromeOptions.setExperimentalOption("prefs", prefs);
-
-                chromeOptions.addArguments("--disable-notifications");
-                chromeOptions.addArguments("--disable-infobars");
-                chromeOptions.addArguments("--disable-extensions");
-
-                if (headless) {
-                    chromeOptions.addArguments("--headless=new");
-                    chromeOptions.addArguments("--no-sandbox");
-                    chromeOptions.addArguments("--disable-dev-shm-usage");
-                    chromeOptions.addArguments("--remote-allow-origins=*");
-                }
-
-                return new ChromeDriver(chromeOptions);
+        if (executionMode.equalsIgnoreCase("remote")) {
+            DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+            try {
+                driver = new RemoteWebDriver(new URL(REMOTE_URL), capabilities);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Invalid RemoteWebDriver URL", e);
+            }
+        } else { // local execution
+            // Set path to your local webdriver binary, for example:
+            System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+            driver = new ChromeDriver();
         }
+
+        return driver;
     }
 }
