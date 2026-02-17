@@ -1,114 +1,17 @@
-package config;
+// Refactored BaseTest.java to use WebDriverFactory
 
-import io.qameta.allure.Allure;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import utils.ConfigReader;
-
-import java.io.ByteArrayInputStream;
-import java.net.URL;
 
 public class BaseTest {
+    protected WebDriver driver;
 
-    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-
-    public WebDriver getDriver() {
-        return driver.get();
+    public void setUp() {
+        driver = WebDriverFactory.createDriver(); // Use WebDriverFactory to configure the driver
     }
 
-    @BeforeEach
-    public void setup() {
-        try {
-
-            String remote = ConfigReader.get("remote");
-            String headless = ConfigReader.get("headless");
-            String browser = System.getProperty("browser", ConfigReader.get("browser"));
-
-            if ("true".equalsIgnoreCase(remote)) {
-
-                String gridUrl = ConfigReader.get("grid.url");
-
-                if ("firefox".equalsIgnoreCase(browser)) {
-                    FirefoxOptions options = new FirefoxOptions();
-                    if ("true".equalsIgnoreCase(headless)) {
-                        options.addArguments("-headless");
-                    }
-
-                    driver.set(new RemoteWebDriver(
-                            new URL(gridUrl),
-                            options
-                    ));
-
-                } else {
-                    ChromeOptions options = new ChromeOptions();
-                    if ("true".equalsIgnoreCase(headless)) {
-                        options.addArguments("--headless=new");
-                        options.addArguments("--no-sandbox");
-                        options.addArguments("--disable-dev-shm-usage");
-                        options.addArguments("--window-size=1920,1080");
-                    }
-
-                    driver.set(new RemoteWebDriver(
-                            new URL(gridUrl),
-                            options
-                    ));
-                }
-
-            } else {
-                // Execução local
-
-                if ("firefox".equalsIgnoreCase(browser)) {
-                    FirefoxOptions options = new FirefoxOptions();
-
-                    if ("true".equalsIgnoreCase(headless)) {
-                        options.addArguments("-headless");
-                    }
-
-                    driver.set(new FirefoxDriver(options));
-
-                } else {
-                    ChromeOptions options = new ChromeOptions();
-
-                    if ("true".equalsIgnoreCase(headless)) {
-                        options.addArguments("--headless=new");
-                        options.addArguments("--no-sandbox");
-                        options.addArguments("--disable-dev-shm-usage");
-                        options.addArguments("--window-size=1920,1080");
-                    } else {
-                        options.addArguments("--start-maximized");
-                    }
-
-                    driver.set(new ChromeDriver(options));
-                }
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao iniciar driver", e);
-        }
-    }
-
-    @AfterEach
     public void tearDown() {
-        if (getDriver() != null) {
-
-            byte[] screenshot = ((TakesScreenshot) getDriver())
-                    .getScreenshotAs(OutputType.BYTES);
-
-            Allure.addAttachment(
-                    "Screenshot",
-                    new ByteArrayInputStream(screenshot)
-            );
-
-            getDriver().quit();
-            driver.remove();
+        if (driver != null) {
+            driver.quit();
         }
     }
 }
