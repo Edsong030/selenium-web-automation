@@ -1,50 +1,41 @@
+// InventoryPage.java
+
 package pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
+import java.util.List;
+import java.util.ArrayList;
 
 public class InventoryPage {
+    private List<String> products;
+    private List<String> cart;
 
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    private By addBackpack = By.id("add-to-cart-sauce-labs-backpack");
-    private By cartIcon = By.cssSelector(".shopping_cart_link");
-    private By cartBadge = By.className("shopping_cart_badge");
-
-    public InventoryPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+    public InventoryPage() {
+        products = new ArrayList<>();
+        cart = new ArrayList<>();
+        initializeProducts();
     }
 
-    public void adicionarProduto() {
-        WebElement botao = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(addBackpack)
-        );
-
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", botao);
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.className("shopping_cart_badge")
-        ));
+    private void initializeProducts() {
+        products.add("Product 1");
+        products.add("Product 2");
+        products.add("Product 3");
     }
 
+    public List<String> getProducts() {
+        return products;
+    }
 
-    public void abrirCarrinho() {
-        WebElement carrinho = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(cartIcon)
-        );
+    public void addToCart(String product) {
+        if (products.contains(product)) {
+            cart.add(product);
+        }
+    }
 
-        // Clique via JavaScript (mais estável no CI)
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].click();", carrinho);
+    public List<String> getCart() {
+        return cart;
+    }
 
-        wait.until(ExpectedConditions.urlContains("cart.html"));
+    public void removeFromCart(String product) {
+        cart.remove(product);
     }
 }
