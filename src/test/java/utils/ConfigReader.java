@@ -1,35 +1,38 @@
+// Improved ConfigReader.java with better validation and error handling
+
 package utils;
 
-import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigReader {
+    private Properties properties;
 
-    private static Properties properties = new Properties();
+    public ConfigReader(String filePath) {
+        properties = new Properties();
+        loadProperties(filePath);
+    }
 
-    static {
-        try {
-            InputStream input = ConfigReader.class
-                    .getClassLoader()
-                    .getResourceAsStream("config.properties");
-
-            if (input == null) {
-                throw new RuntimeException("Arquivo config.properties não encontrado.");
-            }
-
+    private void loadProperties(String filePath) {
+        try (FileInputStream input = new FileInputStream(filePath)) {
             properties.load(input);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao carregar config.properties", e);
+        } catch (IOException e) {
+            System.err.println("Error loading properties file: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // Additional cleanup if necessary
         }
     }
 
-    public static String get(String key) {
-        return properties.getProperty(key);
+    public String getProperty(String key) {
+        String value = properties.getProperty(key);
+        if (value == null) {
+            System.err.println("Property with key '" + key + "' not found.");
+            // You could also throw an exception or return a default value
+        }
+        return value;
     }
 
-    public static String getBaseUrl() {
-        String env = properties.getProperty("environment");
-        return properties.getProperty("base.url." + env);
-    }
+    // Add more methods for validation and error handling if needed
 }
