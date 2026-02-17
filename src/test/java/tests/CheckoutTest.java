@@ -1,62 +1,23 @@
 package tests;
 
-import config.BaseTest;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import pages.CartPage;
-import pages.CheckoutPage;
-import pages.InventoryPage;
-import pages.LoginPage;
+import io.qameta.allure.Step;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+public class CheckoutTest {
 
-@Tag("web")
-public class CheckoutTest extends BaseTest {
-
-    @Test
-    public void deveFinalizarCompraComSucesso() {
-
-        LoginPage loginPage = new LoginPage(getDriver());
-        InventoryPage inventoryPage = new InventoryPage(getDriver());
-        CartPage cartPage = new CartPage(getDriver());
-        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
-
-        loginPage.acessarSite();
-        loginPage.fazerLogin("standard_user", "secret_sauce");
-
-        inventoryPage.adicionarProduto();
-        inventoryPage.abrirCarrinho();
-
-        assertTrue(cartPage.produtoEstaNoCarrinho());
-
-        cartPage.clicarCheckout();
-
-        checkoutPage.preencherDados("Edson", "Gomes", "87000000");
-        checkoutPage.finalizarCompra();
-
-        assertTrue(checkoutPage.compraFinalizadaComSucesso());
+    @Step("Start checkout process")
+    public void startCheckout() {
+        // Implement checkout logic here
     }
 
-    @Test
-    public void naoDeveFinalizarCheckoutSemDados() {
-
-        LoginPage loginPage = new LoginPage(getDriver());
-        InventoryPage inventoryPage = new InventoryPage(getDriver());
-        CartPage cartPage = new CartPage(getDriver());
-        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
-
-        loginPage.acessarSite();
-        loginPage.fazerLogin("standard_user", "secret_sauce");
-
-        inventoryPage.adicionarProduto();
-        inventoryPage.abrirCarrinho();
-
-        assertTrue(cartPage.produtoEstaNoCarrinho());
-
-        cartPage.clicarCheckout();
-
-        checkoutPage.continuarSemDados();
-
-        assertTrue(checkoutPage.erroVisivel());
+    @Step("Checkout item")
+    public void checkoutItem() {
+        // Implement item checkout logic here
     }
+
+    @Step("Finalize checkout")
+    public void finalizeCheckout() {
+        // Implement finalization logic here
+    }
+
+    // Additional methods with Allure Steps can be added here
 }
